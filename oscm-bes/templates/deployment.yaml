@@ -1,0 +1,335 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "fullname" . }}
+  labels:
+    app: {{ template "name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "name" . }}
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.bes.registry }}/{{ .Values.image.bes.repository }}:{{ .Values.image.bes.tag }}"
+          imagePullPolicy: {{ .Values.image.bes.pullPolicy }}
+          ports:
+            - name: {{ .Values.service.http.name }}
+              containerPort: {{ .Values.service.http.internalPort }}
+            - name: {{ .Values.service.https.name }}
+              containerPort: {{ .Values.service.https.internalPort }}
+        #   livenessProbe:
+        #     httpGet:
+        #       path: /
+        #       port: {{ .Values.service.internalPort }}
+        #   readinessProbe:
+        #     httpGet:
+        #       path: /
+        #       port: {{ .Values.service.internalPort }}
+#           resources:
+# {{ toYaml .Values.resources | indent 12 }}
+#     {{- if .Values.nodeSelector }}
+#       nodeSelector:
+# {{ toYaml .Values.nodeSelector | indent 8 }}
+#     {{- end }}
+          env:
+            - name: AUTH_MODE
+              value: {{ .Values.AuthMode | quote }}
+            - name: KEY_SECRET
+              value: {{ .Values.KeySecret | quote }}
+            - name: DOMAIN_PWD
+              value: {{ .Values.DomainPwd | quote }}
+            - name: CERT_FILE
+              value: {{ .Values.CertFile | quote }}
+            - name: DB_HOST_BES
+              value: {{ template "postgresql.fullname" . }}
+            - name: DB_PORT_BES
+              value: {{ .Values.postgresql.service.port | quote }}
+            - name: DB_NAME_BES
+              value: {{ .Values.DbNameBes | quote }}
+            - name: DB_USER_BES
+              value: {{ .Values.DbUserBes | quote }}
+            - name: DB_PWD_BES
+              value: {{ .Values.DbPwdBes | quote }}
+            - name: DB_TIMEOUT_BES
+              value: {{ .Values.DbTimeoutBes | quote }}
+            - name: DB_WAIT_BES
+              value: {{ .Values.DbWaitBes | quote }}
+            - name: DB_RETRY_INTERVAL_BES
+              value: {{ .Values.DbRetryIntervalBes | quote }}
+            - name: DB_TIMEOUT_MI
+              value: {{ .Values.DbTimeoutMi | quote }}
+            - name: DB_WAIT_MI
+              value: {{ .Values.DbWaitMi | quote }}
+            - name: DB_RETRY_INTERVAL_MI
+              value: {{ .Values.DbRetryIntervalMi | quote }}
+            - name: DB_HOST_JMS
+              value: {{ template "postgresql.fullname" . }}
+            - name: DB_PORT_JMS
+              value: {{ .Values.postgresql.service.port | quote }}
+            - name: DB_NAME_JMS
+              value: {{ .Values.DbNameJms | quote }}
+            - name: DB_USER_JMS
+              value: {{ .Values.DbUserJms | quote }}
+            - name: DB_PWD_JMS
+              value: {{ .Values.DbPwdJms | quote }}
+            - name: SMTP_HOST
+              value: {{ .Values.SmtpHost | quote }}
+            - name: SMTP_PORT
+              value: {{ .Values.SmtpPort | quote }}
+            - name: SMTP_FROM
+              value: {{ .Values.SmtpFrom | quote }}
+            - name: SMTP_USER
+              value: {{ .Values.SmtpUser | quote }}
+            - name: SMTP_AUTH
+              value: {{ .Values.SmtpAuth | quote }}
+            - name: SMTP_PWD
+              value: {{ .Values.SmtpPwd | quote }}
+
+      initContainers:
+        - name: {{ .Chart.Name }}-initdb-jms
+          image: "{{ .Values.image.initDb.registry }}/{{ .Values.image.initDb.repository }}:{{ .Values.image.initDb.tag }}"
+          imagePullPolicy: {{ .Values.image.initDb.pullPolicy }}
+          env:
+            - name: TARGET
+              value: {{ .Values.initDb.Jms.Target | quote }}
+            - name: SOURCE
+              value: {{ .Values.initDb.Jms.Source | quote }}
+            - name: OVERWRITE
+              value: {{ .Values.initDb.Jms.Overwrite | quote }}
+            - name: DB_SUPERUSER
+              value: {{ .Values.postgresql.postgresUser | quote }}
+            - name: PGPASSWORD
+              value: {{ .Values.postgresql.postgresPassword | quote }}
+            - name: DB_HOST_BES
+              value: {{ template "postgresql.fullname" . }}
+            - name: DB_PORT_BES
+              value: {{ .Values.postgresql.service.port | quote }}
+            - name: DB_NAME_BES
+              value: {{ .Values.initDb.Jms.DbNameBes | quote }}
+            - name: DB_USER_BES
+              value: {{ .Values.initDb.Jms.DbUserBes | quote }}
+            - name: DB_PWD_BES
+              value: {{ .Values.initDb.Jms.DbPwdBes | quote }}
+            - name: DB_HOST_JMS
+              value: {{ template "postgresql.fullname" . }}
+            - name: DB_PORT_JMS
+              value: {{ .Values.postgresql.service.port | quote }}
+            - name: DB_NAME_JMS
+              value: {{ .Values.initDb.Jms.DbNameJms | quote }}
+            - name: DB_USER_JMS
+              value: {{ .Values.initDb.Jms.DbUserJms | quote }}
+            - name: DB_PWD_JMS
+              value: {{ .Values.initDb.Jms.DbPwdJms | quote }}
+            - name: DB_HOST_APP
+              value: {{ template "postgresql.fullname" . }}
+            - name: DB_PORT_APP
+              value: {{ .Values.postgresql.service.port | quote }}
+            - name: DB_NAME_APP
+              value: {{ .Values.initDb.Jms.DbNameApp | quote }}
+            - name: DB_USER_APP
+              value: {{ .Values.initDb.Jms.DbUserApp | quote }}
+            - name: DB_PWD_APP
+              value: {{ .Values.initDb.Jms.DbPwdApp | quote }}
+            - name: SQL_DUMP_GLOBALS
+              value: {{ .Values.initDb.Jms.SqlDumpGlobals | quote }}
+            - name: SQL_DUMP_BSS
+              value: {{ .Values.initDb.Jms.SqlDumpBss | quote }}
+            - name: SQL_DUMP_BSSJMS
+              value: {{ .Values.initDb.Jms.SqlDumpBssjms | quote }}
+            - name: SQL_DUMP_BSSAPP
+              value: {{ .Values.initDb.Jms.SqlDumpBssapp | quote }}
+            - name: AUTH_MODE
+              value: {{ .Values.initDb.Jms.BesAuthMode | quote }}
+            - name: BASE_URL
+              value: {{ .Values.initDb.Jms.BesBaseUrl | quote }}
+            - name: BASE_URL_HTTPS
+              value: {{ .Values.initDb.Jms.BesBaseUrlHttps | quote }}
+            - name: LOG_LEVEL
+              value: {{ .Values.initDb.Jms.BesLogLevel | quote }}
+            - name: KEY_FILE_PATH
+              value: {{ .Values.initDb.Jms.BesKeyFilePath | quote }}
+            - name: REPORT_ENGINEURL
+              value: {{ .Values.initDb.Jms.BesReportEngineUrl | quote }}
+            - name: REPORT_WSDLURL
+              value: {{ .Values.initDb.Jms.BesReportWsdlUrl | quote }}
+            - name: REPORT_SOAP_ENDPOINT
+              value: {{ .Values.initDb.Jms.BesReportSoapEndpoint | quote }}
+            - name: CUSTOMER_SELF_REGISTRATION_ENABLED
+              value: {{ .Values.initDb.Jms.BesCustomerSelfRegistrationEnabled | quote }}
+            - name: SSO_IDP_URL
+              value: {{ .Values.initDb.Jms.BesSsoIdpUrl | quote }}
+            - name: SSO_IDP_AUTHENTICATION_REQUEST_HTTP_METHOD
+              value: {{ .Values.initDb.Jms.BesSsoIdpAuthenticationRequestHttpMethod | quote }}
+            - name: SSO_ISSUER_ID
+              value: {{ .Values.initDb.Jms.BesSsoIssuerId | quote }}
+            - name: SSO_STS_ENCKEY_LEN
+              value: {{ .Values.initDb.Jms.BesSsoStsEnckeyLen | quote }}
+            - name: SSO_STS_URL
+              value: {{ .Values.initDb.Jms.BesSsoStsUrl | quote }}
+            - name: SSO_STS_METADATA_URL
+              value: {{ .Values.initDb.Jms.BesSsoStsMetadata | quote }}
+            - name: SSO_DEFAULT_TENANT_ID
+              value: {{ .Values.initDb.Jms.BesSsoDefaultTenantId | quote }}
+            - name: SSO_IDP_SAML_ASSERTION_ISSUER_ID
+              value: {{ .Values.initDb.Jms.BesSsoIdpSamlAssertionIssuerId | quote }}
+            - name: SSO_LOGOUT_URL
+              value: {{ .Values.initDb.Jms.BesSsoLogoutUrl | quote }}
+            - name: ADMIN_USER_ID
+              value: {{ .Values.initDb.Jms.BesAdminUserId | quote }}
+            - name: APP_BASE_URL
+              value: {{ .Values.initDb.Jms.AppBaseUrl | quote }}
+            - name: APP_TRUSTSTORE_BSS_ALIAS
+              value: {{ .Values.initDb.Jms.AppTruststoreBssAlias | quote }}
+            - name: APP_ADMIN_MAIL_ADDRESS
+              value: {{ .Values.initDb.Jms.AppAdminMailAddress | quote }}
+            - name: APP_USER_KEY
+              value: {{ .Values.initDb.Jms.AppUserKey | quote }}
+            - name: APP_USER_NAME
+              value: {{ .Values.initDb.Jms.AppUserName | quote }}
+            - name: APP_USER_PWD
+              value: {{ .Values.initDb.Jms.AppUserPwd | quote }}
+            - name: BES_ID_SERVICE
+              value: {{ .Values.initDb.Jms.BesIdService | quote }}
+            - name: BES_ID_SERVICE_WSDL
+              value: {{ .Values.initDb.Jms.BesIdServiceWsdl | quote }}
+            - name: BES_ID_SERVICE_STS
+              value: {{ .Values.initDb.Jms.BesIdServiceSts | quote }}
+            - name: BES_ID_SERVICE_STS_WSDL
+              value: {{ .Values.initDb.Jms.BesIdServiceStsWsdl | quote }}
+            - name: CONTROLLER_ID
+              value: {{ .Values.initDb.Jms.ControllerId | quote }}
+            - name: CONTROLLER_ORG_ID
+              value: {{ .Values.initDb.Jms.ControllerOrgId | quote }}
+            - name: CONTROLLER_USER_KEY
+              value: {{ .Values.initDb.Jms.ControllerUserKey | quote }}
+            - name: CONTROLLER_USER_NAME
+              value: {{ .Values.initDb.Jms.ControllerUserName | quote }}
+            - name: CONTROLLER_USER_PASS
+              value: {{ .Values.initDb.Jms.ControllerUserPass | quote }}
+        - name: {{ .Chart.Name }}-initdb-bes
+          image: "{{ .Values.image.initDb.registry }}/{{ .Values.image.initDb.repository }}:{{ .Values.image.initDb.tag }}"
+          imagePullPolicy: {{ .Values.image.initDb.pullPolicy }}
+          env:
+            - name: TARGET
+              value: {{ .Values.initDb.Bes.Target | quote }}
+            - name: SOURCE
+              value: {{ .Values.initDb.Bes.Source | quote }}
+            - name: OVERWRITE
+              value: {{ .Values.initDb.Bes.Overwrite | quote }}
+            - name: DB_SUPERUSER
+              value: {{ .Values.postgresql.postgresUser | quote }}
+            - name: PGPASSWORD
+              value: {{ .Values.postgresql.postgresPassword | quote }}
+            - name: DB_HOST_BES
+              value: {{ template "postgresql.fullname" . }}
+            - name: DB_PORT_BES
+              value: {{ .Values.postgresql.service.port | quote }}
+            - name: DB_NAME_BES
+              value: {{ .Values.initDb.Bes.DbNameBes | quote }}
+            - name: DB_USER_BES
+              value: {{ .Values.initDb.Bes.DbUserBes | quote }}
+            - name: DB_PWD_BES
+              value: {{ .Values.initDb.Bes.DbPwdBes | quote }}
+            - name: DB_HOST_JMS
+              value: {{ template "postgresql.fullname" . }}
+            - name: DB_PORT_JMS
+              value: {{ .Values.postgresql.service.port | quote }}
+            - name: DB_NAME_JMS
+              value: {{ .Values.initDb.Bes.DbNameJms | quote }}
+            - name: DB_USER_JMS
+              value: {{ .Values.initDb.Bes.DbUserJms | quote }}
+            - name: DB_PWD_JMS
+              value: {{ .Values.initDb.Bes.DbPwdJms | quote }}
+            - name: DB_HOST_APP
+              value: {{ template "postgresql.fullname" . }}
+            - name: DB_PORT_APP
+              value: {{ .Values.postgresql.service.port | quote }}
+            - name: DB_NAME_APP
+              value: {{ .Values.initDb.Bes.DbNameApp | quote }}
+            - name: DB_USER_APP
+              value: {{ .Values.initDb.Bes.DbUserApp | quote }}
+            - name: DB_PWD_APP
+              value: {{ .Values.initDb.Bes.DbPwdApp | quote }}
+            - name: SQL_DUMP_GLOBALS
+              value: {{ .Values.initDb.Bes.SqlDumpGlobals | quote }}
+            - name: SQL_DUMP_BSS
+              value: {{ .Values.initDb.Bes.SqlDumpBss | quote }}
+            - name: SQL_DUMP_BSSJMS
+              value: {{ .Values.initDb.Bes.SqlDumpBssjms | quote }}
+            - name: SQL_DUMP_BSSAPP
+              value: {{ .Values.initDb.Bes.SqlDumpBssapp | quote }}
+            - name: AUTH_MODE
+              value: {{ .Values.initDb.Bes.BesAuthMode | quote }}
+            - name: BASE_URL
+              value: {{ .Values.initDb.Bes.BesBaseUrl | quote }}
+            - name: BASE_URL_HTTPS
+              value: {{ .Values.initDb.Bes.BesBaseUrlHttps | quote }}
+            - name: LOG_LEVEL
+              value: {{ .Values.initDb.Bes.BesLogLevel | quote }}
+            - name: KEY_FILE_PATH
+              value: {{ .Values.initDb.Bes.BesKeyFilePath | quote }}
+            - name: REPORT_ENGINEURL
+              value: {{ .Values.initDb.Bes.BesReportEngineUrl | quote }}
+            - name: REPORT_WSDLURL
+              value: {{ .Values.initDb.Bes.BesReportWsdlUrl | quote }}
+            - name: REPORT_SOAP_ENDPOINT
+              value: {{ .Values.initDb.Bes.BesReportSoapEndpoint | quote }}
+            - name: CUSTOMER_SELF_REGISTRATION_ENABLED
+              value: {{ .Values.initDb.Bes.BesCustomerSelfRegistrationEnabled | quote }}
+            - name: SSO_IDP_URL
+              value: {{ .Values.initDb.Bes.BesSsoIdpUrl | quote }}
+            - name: SSO_IDP_AUTHENTICATION_REQUEST_HTTP_METHOD
+              value: {{ .Values.initDb.Bes.BesSsoIdpAuthenticationRequestHttpMethod | quote }}
+            - name: SSO_ISSUER_ID
+              value: {{ .Values.initDb.Bes.BesSsoIssuerId | quote }}
+            - name: SSO_STS_ENCKEY_LEN
+              value: {{ .Values.initDb.Bes.BesSsoStsEnckeyLen | quote }}
+            - name: SSO_STS_URL
+              value: {{ .Values.initDb.Bes.BesSsoStsUrl | quote }}
+            - name: SSO_STS_METADATA_URL
+              value: {{ .Values.initDb.Bes.BesSsoStsMetadata | quote }}
+            - name: SSO_DEFAULT_TENANT_ID
+              value: {{ .Values.initDb.Bes.BesSsoDefaultTenantId | quote }}
+            - name: SSO_IDP_SAML_ASSERTION_ISSUER_ID
+              value: {{ .Values.initDb.Bes.BesSsoIdpSamlAssertionIssuerId | quote }}
+            - name: SSO_LOGOUT_URL
+              value: {{ .Values.initDb.Bes.BesSsoLogoutUrl | quote }}
+            - name: ADMIN_USER_ID
+              value: {{ .Values.initDb.Bes.BesAdminUserId | quote }}
+            - name: APP_BASE_URL
+              value: {{ .Values.initDb.Bes.AppBaseUrl | quote }}
+            - name: APP_TRUSTSTORE_BSS_ALIAS
+              value: {{ .Values.initDb.Bes.AppTruststoreBssAlias | quote }}
+            - name: APP_ADMIN_MAIL_ADDRESS
+              value: {{ .Values.initDb.Bes.AppAdminMailAddress | quote }}
+            - name: APP_USER_KEY
+              value: {{ .Values.initDb.Bes.AppUserKey | quote }}
+            - name: APP_USER_NAME
+              value: {{ .Values.initDb.Bes.AppUserName | quote }}
+            - name: APP_USER_PWD
+              value: {{ .Values.initDb.Bes.AppUserPwd | quote }}
+            - name: BES_ID_SERVICE
+              value: {{ .Values.initDb.Bes.BesIdService | quote }}
+            - name: BES_ID_SERVICE_WSDL
+              value: {{ .Values.initDb.Bes.BesIdServiceWsdl | quote }}
+            - name: BES_ID_SERVICE_STS
+              value: {{ .Values.initDb.Bes.BesIdServiceSts | quote }}
+            - name: BES_ID_SERVICE_STS_WSDL
+              value: {{ .Values.initDb.Bes.BesIdServiceStsWsdl | quote }}
+            - name: CONTROLLER_ID
+              value: {{ .Values.initDb.Bes.ControllerId | quote }}
+            - name: CONTROLLER_ORG_ID
+              value: {{ .Values.initDb.Bes.ControllerOrgId | quote }}
+            - name: CONTROLLER_USER_KEY
+              value: {{ .Values.initDb.Bes.ControllerUserKey | quote }}
+            - name: CONTROLLER_USER_NAME
+              value: {{ .Values.initDb.Bes.ControllerUserName | quote }}
+            - name: CONTROLLER_USER_PASS
+              value: {{ .Values.initDb.Bes.ControllerUserPass | quote }}

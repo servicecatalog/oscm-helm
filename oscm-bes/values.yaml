@@ -1,0 +1,223 @@
+# Default values for oscm-bes.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+replicaCount: 1
+image:
+  bes:
+    registry: your.registry.example.com
+    repository: oscm-bes
+    tag: v17.2.1_oscmaas
+    pullPolicy: IfNotPresent
+  initDb:
+    registry: your.registry.example.com
+    repository: oscm-initdb
+    tag: v17.2.1_oscmaas
+    pullPolicy: IfNotPresent
+
+service:
+  type: LoadBalancer
+  http:
+    name: oscm-bes-http
+    externalPort: 8080
+    internalPort: 8080
+  https:
+    name: oscm-bes-https
+    externalPort: 8081
+    internalPort: 8081
+
+ingress:
+  enabled: false
+  # Used to create Ingress record (should used with service.type: ClusterIP).
+  hosts:
+    - chart-example.local
+  annotations:
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  tls:
+    # Secrets must be manually created in the namespace.
+    # - secretName: chart-example-tls
+    #   hosts:
+    #     - chart-example.local
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious 
+  # choice for the user. This also increases chances charts run on environments with little 
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following 
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #  cpu: 100m
+  #  memory: 128Mi
+  #requests:
+  #  cpu: 100m
+  #  memory: 128Mi
+
+
+#####################
+# BES configuration #
+#####################
+AuthMode: "INTERNAL"
+KeySecret: "secret"
+DomainPwd: "adminadmin"
+CertFile: "s1as.crt"
+DbNameBes: "bss"
+DbUserBes: "bssuser"
+DbPwdBes: "bssuser"
+DbTimeoutBes: "300"
+DbWaitBes: "60000"
+DbRetryIntervalBes: "10"
+DbTimeoutMi: "300"
+DbWaitMi: "60000"
+DbRetryIntervalMi: "10"
+DbNameJms: "bssjms"
+DbUserJms: "jmsuser"
+DbPwdJms: "jmsuser"
+SmtpHost: "localhost"
+SmtpPort: "25"
+SmtpFrom: "mail@example.com"
+SmtpUser: "saas"
+SmtpAuth: "false"
+SmtpPwd: "secret"
+
+
+##########################
+# Database configuration #
+##########################
+initDb:
+# JMS DB
+  Jms:
+    Target: "JMS"
+    Source: "INIT"
+    Overwrite: "false"
+    DbNameBes: "bss"
+    DbUserBes: "bssuser"
+    DbPwdBes: "bssuser"
+    DbNameJms: "bssjms"
+    DbUserJms: "jmsuser"
+    DbPwdJms: "jmsuser"
+    DbNameApp: "bssapp"
+    DbUserApp: "bssappuser"
+    DbPwdApp: "bssappuser"
+    SqlDumpGlobals: "globals.sql"
+    SqlDumpBss: "bss.sql"
+    SqlDumpBssjms: "bssjms.sql"
+    SqlDumpBssapp: "bssapp.sql"
+    BesAuthMode: "INTERNAL"
+    BesBaseUrl: "http://localhost:8080/oscm-portal"
+    BesBaseUrlHttps: "https://localhost:8081/oscm-portal"
+    BesLogLevel: "INFO"
+    BesKeyFilePath: "./key"
+    BesReportEngineUrl: "https://localhost:8081/birt/frameset?__report=${reportname}.rptdesign&SessionId=${sessionid}&__locale=${locale}&WSDLURL=${wsdlurl}&SOAPEndPoint=${soapendpoint}&wsname=ReportSecure&wsport=ReportSecurePort"
+    BesReportWsdlUrl: "https://localhost:8081/ReportSecure/ReportingServiceSecureBean?wsdl"
+    BesReportSoapEndpoint: "https://localhost:8081/ReportSecure/ReportingServiceSecureBean"
+    BesCustomerSelfRegistrationEnabled: "false"
+    BesSsoIdpUrl: "http://idp.com"
+    BesSsoIdpAuthenticationRequestHttpMethod: "POST"
+    BesSsoIssuerId: "issuer"
+    BesSsoStsEnckeyLen: "256"
+    BesSsoStsUrl: "http://sts.example.com"
+    BesSsoStsMetadata: "http://meta.example.com"
+    BesSsoDefaultTenantId: "dftenant"
+    BesSsoIdpSamlAssertionIssuerId: "issuer"
+    BesSsoLogoutUrl: "http://logout.example.com"
+    BesAdminUserId: "administrator"
+    AppBaseUrl: "http://localhost/oscm-app"
+    AppAdminMailAddress: "mail@example.com"
+    AppTruststoreBssAlias: "bes-s1as"
+    AppUserKey: "1000"
+    AppUserName: "administrator"
+    AppUserPwd: "admin123"
+    BesIdService: "http://localhost:8080/{SERVICE}/BASIC"
+    BesIdServiceWsdl: "http://localhost:8080/oscm/v1.9/{SERVICE}/BASIC?wsdl"
+    BesIdServiceSts: "http://localhost:8080/{SERVICE}/STS"
+    BesIdServiceStsWsdl: "http://localhost:8080/oscm/v1.9/{SERVICE}/STS?wsdl"
+    ControllerId: "ess.sample"
+    ControllerOrgId: "PLATFORM_OPERATOR"
+    ControllerUserKey: "1000"
+    ControllerUserName: "administrator"
+    ControllerUserPass: "admin123"
+
+# BES DB
+  Bes:
+    Target: "BES"
+    Source: "INIT"
+    Overwrite: "false"
+    DbNameBes: "bss"
+    DbUserBes: "bssuser"
+    DbPwdBes: "bssuser"
+    DbNameJms: "bssjms"
+    DbUserJms: "jmsuser"
+    DbPwdJms: "jmsuser"
+    DbNameApp: "bssapp"
+    DbUserApp: "bssappuser"
+    DbPwdApp: "bssappuser"
+    SqlDumpGlobals: "globals.sql"
+    SqlDumpBss: "bss.sql"
+    SqlDumpBssjms: "bssjms.sql"
+    SqlDumpBssapp: "bssapp.sql"
+    BesAuthMode: "INTERNAL"
+    BesBaseUrl: "http://localhost/oscm-portal"
+    BesBaseUrlHttps: "https://localhost/oscm-portal"
+    BesLogLevel: "INFO"
+    BesKeyFilePath: "./key"
+    BesReportEngineUrl: "https://localhost:8081/birt/frameset?__report=${reportname}.rptdesign&SessionId=${sessionid}&__locale=${locale}&WSDLURL=${wsdlurl}&SOAPEndPoint=${soapendpoint}&wsname=ReportSecure&wsport=ReportSecurePort"
+    BesReportWsdlUrl: "https://localhost:8081/ReportSecure/ReportingServiceSecureBean?wsdl"
+    BesReportSoapEndpoint: "https://localhost:8081/ReportSecure/ReportingServiceSecureBean"
+    BesCustomerSelfRegistrationEnabled: "false"
+    BesSsoIdpUrl: "http://idp.com"
+    BesSsoIdpAuthenticationRequestHttpMethod: "POST"
+    BesSsoIssuerId: "issuer"
+    BesSsoStsEnckeyLen: "256"
+    BesSsoStsUrl: "http://sts.example.com"
+    BesSsoStsMetadata: "http://meta.example.com"
+    BesSsoDefaultTenantId: "dftenant"
+    BesSsoIdpSamlAssertionIssuerId: "issuer"
+    BesSsoLogoutUrl: "http://logout.example.com"
+    BesAdminUserId: "administrator"
+    AppBaseUrl: "http://localhost/oscm-app"
+    AppAdminMailAddress: "mail@example.com"
+    AppTruststoreBssAlias: "bes-s1as"
+    AppUserKey: "1000"
+    AppUserName: "administrator"
+    AppUserPwd: "admin123"
+    BesIdService: "http://localhost:8080/{SERVICE}/BASIC"
+    BesIdServiceWsdl: "http://localhost:8080/oscm/v1.9/{SERVICE}/BASIC?wsdl"
+    BesIdServiceSts: "http://localhost:8080/{SERVICE}/STS"
+    BesIdServiceStsWsdl: "http://localhost:8080/oscm/v1.9/{SERVICE}/STS?wsdl"
+    ControllerId: "ess.sample"
+    ControllerOrgId: "PLATFORM_OPERATOR"
+    ControllerUserKey: "1000"
+    ControllerUserName: "administrator"
+    ControllerUserPass: "admin123"
+    
+
+############################
+# PostgreSQL configuration #
+############################
+postgresql:
+  image: "postgres"
+  imageTag: "9.6"
+  imagePullPolicy: "IfNotPresent"
+  postgresUser: "postgres"
+  postgresPassword: "postgres"
+  postgresDatabase: "postgres"
+  # postgresInitdbArgs:
+  persistence:
+    enabled: true
+    ## A manually managed Persistent Volume and Claim
+    ## Requires persistence.enabled: true
+    ## If defined, PVC must be created manually before volume will be bound
+    # existingClaim:
+    ## If defined, volume.beta.kubernetes.io/storage-class: <storageClass>
+    ## Default: volume.alpha.kubernetes.io/storage-class: default
+    ##
+    # storageClass:
+    accessMode: "ReadWriteOnce"
+    size: "2Gi"
+    subPath: "postgresql-db"
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 100m
+  service:
+    type: ClusterIP
+    port: 5432
+    externalIPs: []

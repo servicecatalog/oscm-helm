@@ -1,0 +1,16 @@
+apiVersion: v1
+description: Open Service Catalog Manager core
+name: oscm-bes
+version: 0.0.2
+keywords:
+  - oscm
+  - bes
+sources:
+  - https://github.com/servicecatalog/development
+  - https://github.com/servicecatalog/oscm-dockerbuild
+maintainers: # (optional)
+  - name: MiethanerR
+  - name: shimizuf
+engine: gotpl
+appVersion: 17.2.1
+deprecated: false

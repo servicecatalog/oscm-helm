@@ -1,0 +1,443 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "fullname" . }}
+  labels:
+    app: {{ template "name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "name" . }}
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.app.registry }}/{{ .Values.image.app.repository }}:{{ .Values.image.app.tag }}"
+          imagePullPolicy: {{ .Values.image.app.pullPolicy }}
+          ports:
+            - name: {{ .Values.service.http.name }}
+              containerPort: {{ .Values.service.http.internalPort }}
+            - name: {{ .Values.service.https.name }}
+              containerPort: {{ .Values.service.https.internalPort }}
+        #   livenessProbe:
+        #     httpGet:
+        #       path: /
+        #       port: {{ .Values.service.internalPort }}
+        #   readinessProbe:
+        #     httpGet:
+        #       path: /
+        #       port: {{ .Values.service.internalPort }}
+#           resources:
+# {{ toYaml .Values.resources | indent 12 }}
+#     {{- if .Values.nodeSelector }}
+#       nodeSelector:
+# {{ toYaml .Values.nodeSelector | indent 8 }}
+#     {{- end }}
+          env:
+            - name: AUTH_MODE
+              value: {{ .Values.AuthMode | quote }}
+            - name: KEY_SECRET
+              value: {{ .Values.KeySecret | quote }}
+            - name: DOMAIN_PWD
+              value: {{ .Values.DomainPwd | quote }}
+            - name: CERT_FILE
+              value: {{ .Values.CertFile | quote }}
+            - name: IDP_WSDL_URL
+              value: {{ .Values.IdpWsdlUrl | quote }}
+            - name: IDP_TARGET_NAMESPACE
+              value: {{ .Values.IdpTargetNamespace | quote }}
+            - name: DB_HOST_APP
+              value: {{ template "postgresql.fullname" . }}
+            - name: DB_PORT_APP
+              value: {{ .Values.postgresql.service.port | quote }}
+            - name: DB_NAME_APP
+              value: {{ .Values.DbNameApp | quote }}
+            - name: DB_USER_APP
+              value: {{ .Values.DbUserApp | quote }}
+            - name: DB_PWD_APP
+              value: {{ .Values.DbPwdApp | quote }}
+            - name: DB_TIMEOUT_APP
+              value: {{ .Values.DbTimeoutApp | quote }}
+            - name: DB_WAIT_APP
+              value: {{ .Values.DbWaitApp | quote }}
+            - name: DB_RETRY_INTERVAL_APP
+              value: {{ .Values.DbRetryIntervalApp | quote }}
+            - name: SMTP_HOST
+              value: {{ .Values.SmtpHost | quote }}
+            - name: SMTP_PORT
+              value: {{ .Values.SmtpPort | quote }}
+            - name: SMTP_FROM
+              value: {{ .Values.SmtpFrom | quote }}
+            - name: SMTP_USER
+              value: {{ .Values.SmtpUser | quote }}
+            - name: SMTP_AUTH
+              value: {{ .Values.SmtpAuth | quote }}
+            - name: SMTP_PWD
+              value: {{ .Values.SmtpPwd | quote }}
+
+      initContainers:
+        - name: {{ .Chart.Name }}-initdb-app
+          image: "{{ .Values.image.initDb.registry }}/{{ .Values.image.initDb.repository }}:{{ .Values.image.initDb.tag }}"
+          imagePullPolicy: {{ .Values.image.initDb.pullPolicy }}
+          env:
+            - name: TARGET
+              value: {{ .Values.initDb.App.Target | quote }}
+            - name: SOURCE
+              value: {{ .Values.initDb.App.Source | quote }}
+            - name: OVERWRITE
+              value: {{ .Values.initDb.App.Overwrite | quote }}
+            - name: DB_SUPERUSER
+              value: {{ .Values.postgresql.postgresUser | quote }}
+            - name: PGPASSWORD
+              value: {{ .Values.postgresql.postgresPassword | quote }}
+            - name: DB_HOST_BES
+              value: {{ template "postgresql.fullname" . }}
+            - name: DB_PORT_BES
+              value: {{ .Values.postgresql.service.port | quote }}
+            - name: DB_NAME_BES
+              value: {{ .Values.initDb.App.DbNameBes | quote }}
+            - name: DB_USER_BES
+              value: {{ .Values.initDb.App.DbUserBes | quote }}
+            - name: DB_PWD_BES
+              value: {{ .Values.initDb.App.DbPwdBes | quote }}
+            - name: DB_HOST_JMS
+              value: {{ template "postgresql.fullname" . }}
+            - name: DB_PORT_JMS
+              value: {{ .Values.postgresql.service.port | quote }}
+            - name: DB_NAME_JMS
+              value: {{ .Values.initDb.App.DbNameJms | quote }}
+            - name: DB_USER_JMS
+              value: {{ .Values.initDb.App.DbUserJms | quote }}
+            - name: DB_PWD_JMS
+              value: {{ .Values.initDb.App.DbPwdJms | quote }}
+            - name: DB_HOST_APP
+              value: {{ template "postgresql.fullname" . }}
+            - name: DB_PORT_APP
+              value: {{ .Values.postgresql.service.port | quote }}
+            - name: DB_NAME_APP
+              value: {{ .Values.initDb.App.DbNameApp | quote }}
+            - name: DB_USER_APP
+              value: {{ .Values.initDb.App.DbUserApp | quote }}
+            - name: DB_PWD_APP
+              value: {{ .Values.initDb.App.DbPwdApp | quote }}
+            - name: SQL_DUMP_GLOBALS
+              value: {{ .Values.initDb.App.SqlDumpGlobals | quote }}
+            - name: SQL_DUMP_BSS
+              value: {{ .Values.initDb.App.SqlDumpBss | quote }}
+            - name: SQL_DUMP_BSSJMS
+              value: {{ .Values.initDb.App.SqlDumpBssjms | quote }}
+            - name: SQL_DUMP_BSSAPP
+              value: {{ .Values.initDb.App.SqlDumpBssapp | quote }}
+            - name: AUTH_MODE
+              value: {{ .Values.initDb.App.BesAuthMode | quote }}
+            - name: BASE_URL
+              value: {{ .Values.initDb.App.BesBaseUrl | quote }}
+            - name: BASE_URL_HTTPS
+              value: {{ .Values.initDb.App.BesBaseUrlHttps | quote }}
+            - name: LOG_LEVEL
+              value: {{ .Values.initDb.App.BesLogLevel | quote }}
+            - name: KEY_FILE_PATH
+              value: {{ .Values.initDb.App.BesKeyFilePath | quote }}
+            - name: REPORT_ENGINEURL
+              value: {{ .Values.initDb.App.BesReportEngineUrl | quote }}
+            - name: REPORT_WSDLURL
+              value: {{ .Values.initDb.App.BesReportWsdlUrl | quote }}
+            - name: REPORT_SOAP_ENDPOINT
+              value: {{ .Values.initDb.App.BesReportSoapEndpoint | quote }}
+            - name: CUSTOMER_SELF_REGISTRATION_ENABLED
+              value: {{ .Values.initDb.App.BesCustomerSelfRegistrationEnabled | quote }}
+            - name: SSO_IDP_URL
+              value: {{ .Values.initDb.App.BesSsoIdpUrl | quote }}
+            - name: SSO_IDP_AUTHENTICATION_REQUEST_HTTP_METHOD
+              value: {{ .Values.initDb.App.BesSsoIdpAuthenticationRequestHttpMethod | quote }}
+            - name: SSO_ISSUER_ID
+              value: {{ .Values.initDb.App.BesSsoIssuerId | quote }}
+            - name: SSO_STS_ENCKEY_LEN
+              value: {{ .Values.initDb.App.BesSsoStsEnckeyLen | quote }}
+            - name: SSO_STS_URL
+              value: {{ .Values.initDb.App.BesSsoStsUrl | quote }}
+            - name: SSO_STS_METADATA_URL
+              value: {{ .Values.initDb.App.BesSsoStsMetadata | quote }}
+            - name: SSO_DEFAULT_TENANT_ID
+              value: {{ .Values.initDb.App.BesSsoDefaultTenantId | quote }}
+            - name: SSO_IDP_SAML_ASSERTION_ISSUER_ID
+              value: {{ .Values.initDb.App.BesSsoIdpSamlAssertionIssuerId | quote }}
+            - name: SSO_LOGOUT_URL
+              value: {{ .Values.initDb.App.BesSsoLogoutUrl | quote }}
+            - name: ADMIN_USER_ID
+              value: {{ .Values.initDb.App.BesAdminUserId | quote }}
+            - name: APP_BASE_URL
+              value: {{ .Values.initDb.App.AppBaseUrl | quote }}
+            - name: APP_TRUSTSTORE_BSS_ALIAS
+              value: {{ .Values.initDb.App.AppTruststoreBssAlias | quote }}
+            - name: APP_ADMIN_MAIL_ADDRESS
+              value: {{ .Values.initDb.App.AppAdminMailAddress | quote }}
+            - name: APP_USER_KEY
+              value: {{ .Values.initDb.App.AppUserKey | quote }}
+            - name: APP_USER_NAME
+              value: {{ .Values.initDb.App.AppUserName | quote }}
+            - name: APP_USER_PWD
+              value: {{ .Values.initDb.App.AppUserPwd | quote }}
+            - name: BES_ID_SERVICE
+              value: {{ .Values.initDb.App.BesIdService | quote }}
+            - name: BES_ID_SERVICE_WSDL
+              value: {{ .Values.initDb.App.BesIdServiceWsdl | quote }}
+            - name: BES_ID_SERVICE_STS
+              value: {{ .Values.initDb.App.BesIdServiceSts | quote }}
+            - name: BES_ID_SERVICE_STS_WSDL
+              value: {{ .Values.initDb.App.BesIdServiceStsWsdl | quote }}
+            - name: CONTROLLER_ID
+              value: {{ .Values.initDb.App.ControllerId | quote }}
+            - name: CONTROLLER_ORG_ID
+              value: {{ .Values.initDb.App.ControllerOrgId | quote }}
+            - name: CONTROLLER_USER_KEY
+              value: {{ .Values.initDb.App.ControllerUserKey | quote }}
+            - name: CONTROLLER_USER_NAME
+              value: {{ .Values.initDb.App.ControllerUserName | quote }}
+            - name: CONTROLLER_USER_PASS
+              value: {{ .Values.initDb.App.ControllerUserPass | quote }}
+        - name: {{ .Chart.Name }}-initdb-app-aws
+          image: "{{ .Values.image.initDb.registry }}/{{ .Values.image.initDb.repository }}:{{ .Values.image.initDb.tag }}"
+          imagePullPolicy: {{ .Values.image.initDb.pullPolicy }}
+          env:
+            - name: TARGET
+              value: {{ .Values.initDb.AppAws.Target | quote }}
+            - name: SOURCE
+              value: {{ .Values.initDb.AppAws.Source | quote }}
+            - name: OVERWRITE
+              value: {{ .Values.initDb.AppAws.Overwrite | quote }}
+            - name: DB_SUPERUSER
+              value: {{ .Values.postgresql.postgresUser | quote }}
+            - name: PGPASSWORD
+              value: {{ .Values.postgresql.postgresPassword | quote }}
+            - name: DB_HOST_BES
+              value: {{ template "postgresql.fullname" . }}
+            - name: DB_PORT_BES
+              value: {{ .Values.postgresql.service.port | quote }}
+            - name: DB_NAME_BES
+              value: {{ .Values.initDb.AppAws.DbNameBes | quote }}
+            - name: DB_USER_BES
+              value: {{ .Values.initDb.AppAws.DbUserBes | quote }}
+            - name: DB_PWD_BES
+              value: {{ .Values.initDb.AppAws.DbPwdBes | quote }}
+            - name: DB_HOST_JMS
+              value: {{ template "postgresql.fullname" . }}
+            - name: DB_PORT_JMS
+              value: {{ .Values.postgresql.service.port | quote }}
+            - name: DB_NAME_JMS
+              value: {{ .Values.initDb.AppAws.DbNameJms | quote }}
+            - name: DB_USER_JMS
+              value: {{ .Values.initDb.AppAws.DbUserJms | quote }}
+            - name: DB_PWD_JMS
+              value: {{ .Values.initDb.AppAws.DbPwdJms | quote }}
+            - name: DB_HOST_APP
+              value: {{ template "postgresql.fullname" . }}
+            - name: DB_PORT_APP
+              value: {{ .Values.postgresql.service.port | quote }}
+            - name: DB_NAME_APP
+              value: {{ .Values.initDb.AppAws.DbNameApp | quote }}
+            - name: DB_USER_APP
+              value: {{ .Values.initDb.AppAws.DbUserApp | quote }}
+            - name: DB_PWD_APP
+              value: {{ .Values.initDb.AppAws.DbPwdApp | quote }}
+            - name: SQL_DUMP_GLOBALS
+              value: {{ .Values.initDb.AppAws.SqlDumpGlobals | quote }}
+            - name: SQL_DUMP_BSS
+              value: {{ .Values.initDb.AppAws.SqlDumpBss | quote }}
+            - name: SQL_DUMP_BSSJMS
+              value: {{ .Values.initDb.AppAws.SqlDumpBssjms | quote }}
+            - name: SQL_DUMP_BSSAPP
+              value: {{ .Values.initDb.AppAws.SqlDumpBssapp | quote }}
+            - name: AUTH_MODE
+              value: {{ .Values.initDb.AppAws.BesAuthMode | quote }}
+            - name: BASE_URL
+              value: {{ .Values.initDb.AppAws.BesBaseUrl | quote }}
+            - name: BASE_URL_HTTPS
+              value: {{ .Values.initDb.AppAws.BesBaseUrlHttps | quote }}
+            - name: LOG_LEVEL
+              value: {{ .Values.initDb.AppAws.BesLogLevel | quote }}
+            - name: KEY_FILE_PATH
+              value: {{ .Values.initDb.AppAws.BesKeyFilePath | quote }}
+            - name: REPORT_ENGINEURL
+              value: {{ .Values.initDb.AppAws.BesReportEngineUrl | quote }}
+            - name: REPORT_WSDLURL
+              value: {{ .Values.initDb.AppAws.BesReportWsdlUrl | quote }}
+            - name: REPORT_SOAP_ENDPOINT
+              value: {{ .Values.initDb.AppAws.BesReportSoapEndpoint | quote }}
+            - name: CUSTOMER_SELF_REGISTRATION_ENABLED
+              value: {{ .Values.initDb.AppAws.BesCustomerSelfRegistrationEnabled | quote }}
+            - name: SSO_IDP_URL
+              value: {{ .Values.initDb.AppAws.BesSsoIdpUrl | quote }}
+            - name: SSO_IDP_AUTHENTICATION_REQUEST_HTTP_METHOD
+              value: {{ .Values.initDb.AppAws.BesSsoIdpAuthenticationRequestHttpMethod | quote }}
+            - name: SSO_ISSUER_ID
+              value: {{ .Values.initDb.AppAws.BesSsoIssuerId | quote }}
+            - name: SSO_STS_ENCKEY_LEN
+              value: {{ .Values.initDb.AppAws.BesSsoStsEnckeyLen | quote }}
+            - name: SSO_STS_URL
+              value: {{ .Values.initDb.AppAws.BesSsoStsUrl | quote }}
+            - name: SSO_STS_METADATA_URL
+              value: {{ .Values.initDb.AppAws.BesSsoStsMetadata | quote }}
+            - name: SSO_DEFAULT_TENANT_ID
+              value: {{ .Values.initDb.AppAws.BesSsoDefaultTenantId | quote }}
+            - name: SSO_IDP_SAML_ASSERTION_ISSUER_ID
+              value: {{ .Values.initDb.AppAws.BesSsoIdpSamlAssertionIssuerId | quote }}
+            - name: SSO_LOGOUT_URL
+              value: {{ .Values.initDb.AppAws.BesSsoLogoutUrl | quote }}
+            - name: ADMIN_USER_ID
+              value: {{ .Values.initDb.AppAws.BesAdminUserId | quote }}
+            - name: APP_BASE_URL
+              value: {{ .Values.initDb.AppAws.AppBaseUrl | quote }}
+            - name: APP_TRUSTSTORE_BSS_ALIAS
+              value: {{ .Values.initDb.AppAws.AppTruststoreBssAlias | quote }}
+            - name: APP_ADMIN_MAIL_ADDRESS
+              value: {{ .Values.initDb.AppAws.AppAdminMailAddress | quote }}
+            - name: APP_USER_KEY
+              value: {{ .Values.initDb.AppAws.AppUserKey | quote }}
+            - name: APP_USER_NAME
+              value: {{ .Values.initDb.AppAws.AppUserName | quote }}
+            - name: APP_USER_PWD
+              value: {{ .Values.initDb.AppAws.AppUserPwd | quote }}
+            - name: BES_ID_SERVICE
+              value: {{ .Values.initDb.AppAws.BesIdService | quote }}
+            - name: BES_ID_SERVICE_WSDL
+              value: {{ .Values.initDb.AppAws.BesIdServiceWsdl | quote }}
+            - name: BES_ID_SERVICE_STS
+              value: {{ .Values.initDb.AppAws.BesIdServiceSts | quote }}
+            - name: BES_ID_SERVICE_STS_WSDL
+              value: {{ .Values.initDb.AppAws.BesIdServiceStsWsdl | quote }}
+            - name: CONTROLLER_ID
+              value: {{ .Values.initDb.AppAws.ControllerId | quote }}
+            - name: CONTROLLER_ORG_ID
+              value: {{ .Values.initDb.AppAws.ControllerOrgId | quote }}
+            - name: CONTROLLER_USER_KEY
+              value: {{ .Values.initDb.AppAws.ControllerUserKey | quote }}
+            - name: CONTROLLER_USER_NAME
+              value: {{ .Values.initDb.AppAws.ControllerUserName | quote }}
+            - name: CONTROLLER_USER_PASS
+              value: {{ .Values.initDb.AppAws.ControllerUserPass | quote }}
+        - name: {{ .Chart.Name }}-initdb-app-openstack
+          image: "{{ .Values.image.initDb.registry }}/{{ .Values.image.initDb.repository }}:{{ .Values.image.initDb.tag }}"
+          imagePullPolicy: {{ .Values.image.initDb.pullPolicy }}
+          env:
+            - name: TARGET
+              value: {{ .Values.initDb.AppOpenstack.Target | quote }}
+            - name: SOURCE
+              value: {{ .Values.initDb.AppOpenstack.Source | quote }}
+            - name: OVERWRITE
+              value: {{ .Values.initDb.AppOpenstack.Overwrite | quote }}
+            - name: DB_SUPERUSER
+              value: {{ .Values.postgresql.postgresUser | quote }}
+            - name: PGPASSWORD
+              value: {{ .Values.postgresql.postgresPassword | quote }}
+            - name: DB_HOST_BES
+              value: {{ template "postgresql.fullname" . }}
+            - name: DB_PORT_BES
+              value: {{ .Values.postgresql.service.port | quote }}
+            - name: DB_NAME_BES
+              value: {{ .Values.initDb.AppOpenstack.DbNameBes | quote }}
+            - name: DB_USER_BES
+              value: {{ .Values.initDb.AppOpenstack.DbUserBes | quote }}
+            - name: DB_PWD_BES
+              value: {{ .Values.initDb.AppOpenstack.DbPwdBes | quote }}
+            - name: DB_HOST_JMS
+              value: {{ template "postgresql.fullname" . }}
+            - name: DB_PORT_JMS
+              value: {{ .Values.postgresql.service.port | quote }}
+            - name: DB_NAME_JMS
+              value: {{ .Values.initDb.AppOpenstack.DbNameJms | quote }}
+            - name: DB_USER_JMS
+              value: {{ .Values.initDb.AppOpenstack.DbUserJms | quote }}
+            - name: DB_PWD_JMS
+              value: {{ .Values.initDb.AppOpenstack.DbPwdJms | quote }}
+            - name: DB_HOST_APP
+              value: {{ template "postgresql.fullname" . }}
+            - name: DB_PORT_APP
+              value: {{ .Values.postgresql.service.port | quote }}
+            - name: DB_NAME_APP
+              value: {{ .Values.initDb.AppOpenstack.DbNameApp | quote }}
+            - name: DB_USER_APP
+              value: {{ .Values.initDb.AppOpenstack.DbUserApp | quote }}
+            - name: DB_PWD_APP
+              value: {{ .Values.initDb.AppOpenstack.DbPwdApp | quote }}
+            - name: SQL_DUMP_GLOBALS
+              value: {{ .Values.initDb.AppOpenstack.SqlDumpGlobals | quote }}
+            - name: SQL_DUMP_BSS
+              value: {{ .Values.initDb.AppOpenstack.SqlDumpBss | quote }}
+            - name: SQL_DUMP_BSSJMS
+              value: {{ .Values.initDb.AppOpenstack.SqlDumpBssjms | quote }}
+            - name: SQL_DUMP_BSSAPP
+              value: {{ .Values.initDb.AppOpenstack.SqlDumpBssapp | quote }}
+            - name: AUTH_MODE
+              value: {{ .Values.initDb.AppOpenstack.BesAuthMode | quote }}
+            - name: BASE_URL
+              value: {{ .Values.initDb.AppOpenstack.BesBaseUrl | quote }}
+            - name: BASE_URL_HTTPS
+              value: {{ .Values.initDb.AppOpenstack.BesBaseUrlHttps | quote }}
+            - name: LOG_LEVEL
+              value: {{ .Values.initDb.AppOpenstack.BesLogLevel | quote }}
+            - name: KEY_FILE_PATH
+              value: {{ .Values.initDb.AppOpenstack.BesKeyFilePath | quote }}
+            - name: REPORT_ENGINEURL
+              value: {{ .Values.initDb.AppOpenstack.BesReportEngineUrl | quote }}
+            - name: REPORT_WSDLURL
+              value: {{ .Values.initDb.AppOpenstack.BesReportWsdlUrl | quote }}
+            - name: REPORT_SOAP_ENDPOINT
+              value: {{ .Values.initDb.AppOpenstack.BesReportSoapEndpoint | quote }}
+            - name: CUSTOMER_SELF_REGISTRATION_ENABLED
+              value: {{ .Values.initDb.AppOpenstack.BesCustomerSelfRegistrationEnabled | quote }}
+            - name: SSO_IDP_URL
+              value: {{ .Values.initDb.AppOpenstack.BesSsoIdpUrl | quote }}
+            - name: SSO_IDP_AUTHENTICATION_REQUEST_HTTP_METHOD
+              value: {{ .Values.initDb.AppOpenstack.BesSsoIdpAuthenticationRequestHttpMethod | quote }}
+            - name: SSO_ISSUER_ID
+              value: {{ .Values.initDb.AppOpenstack.BesSsoIssuerId | quote }}
+            - name: SSO_STS_ENCKEY_LEN
+              value: {{ .Values.initDb.AppOpenstack.BesSsoStsEnckeyLen | quote }}
+            - name: SSO_STS_URL
+              value: {{ .Values.initDb.AppOpenstack.BesSsoStsUrl | quote }}
+            - name: SSO_STS_METADATA_URL
+              value: {{ .Values.initDb.AppOpenstack.BesSsoStsMetadata | quote }}
+            - name: SSO_DEFAULT_TENANT_ID
+              value: {{ .Values.initDb.AppOpenstack.BesSsoDefaultTenantId | quote }}
+            - name: SSO_IDP_SAML_ASSERTION_ISSUER_ID
+              value: {{ .Values.initDb.AppOpenstack.BesSsoIdpSamlAssertionIssuerId | quote }}
+            - name: SSO_LOGOUT_URL
+              value: {{ .Values.initDb.AppOpenstack.BesSsoLogoutUrl | quote }}
+            - name: ADMIN_USER_ID
+              value: {{ .Values.initDb.AppOpenstack.BesAdminUserId | quote }}
+            - name: APP_BASE_URL
+              value: {{ .Values.initDb.AppOpenstack.AppBaseUrl | quote }}
+            - name: APP_TRUSTSTORE_BSS_ALIAS
+              value: {{ .Values.initDb.AppOpenstack.AppTruststoreBssAlias | quote }}
+            - name: APP_ADMIN_MAIL_ADDRESS
+              value: {{ .Values.initDb.AppOpenstack.AppAdminMailAddress | quote }}
+            - name: APP_USER_KEY
+              value: {{ .Values.initDb.AppOpenstack.AppUserKey | quote }}
+            - name: APP_USER_NAME
+              value: {{ .Values.initDb.AppOpenstack.AppUserName | quote }}
+            - name: APP_USER_PWD
+              value: {{ .Values.initDb.AppOpenstack.AppUserPwd | quote }}
+            - name: BES_ID_SERVICE
+              value: {{ .Values.initDb.AppOpenstack.BesIdService | quote }}
+            - name: BES_ID_SERVICE_WSDL
+              value: {{ .Values.initDb.AppOpenstack.BesIdServiceWsdl | quote }}
+            - name: BES_ID_SERVICE_STS
+              value: {{ .Values.initDb.AppOpenstack.BesIdServiceSts | quote }}
+            - name: BES_ID_SERVICE_STS_WSDL
+              value: {{ .Values.initDb.AppOpenstack.BesIdServiceStsWsdl | quote }}
+            - name: CONTROLLER_ID
+              value: {{ .Values.initDb.AppOpenstack.ControllerId | quote }}
+            - name: CONTROLLER_ORG_ID
+              value: {{ .Values.initDb.AppOpenstack.ControllerOrgId | quote }}
+            - name: CONTROLLER_USER_KEY
+              value: {{ .Values.initDb.AppOpenstack.ControllerUserKey | quote }}
+            - name: CONTROLLER_USER_NAME
+              value: {{ .Values.initDb.AppOpenstack.ControllerUserName | quote }}
+            - name: CONTROLLER_USER_PASS
+              value: {{ .Values.initDb.AppOpenstack.ControllerUserPass | quote }}
