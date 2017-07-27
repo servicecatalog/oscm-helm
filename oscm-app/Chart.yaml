@@ -1,7 +1,7 @@
 apiVersion: v1
 description: Open Service Catalog Manager Asynchronous Provisioning Platform
 name: oscm-app
-version: 0.0.1
+version: 0.0.2
 keywords:
   - oscm
   - app
@@ -12,5 +12,5 @@ maintainers: # (optional)
   - name: MiethanerR
   - name: shimizuf
 engine: gotpl
-appVersion: 17.2.1
+appVersion: 17.3.0
 deprecated: false
