@@ -6,12 +6,12 @@ image:
   app:
     registry: your.registry.example.com
     repository: oscm-app
-    tag: v17.2.1_oscmaas
+    tag: v17.3.0_oscmaas
     pullPolicy: IfNotPresent
   initDb:
     registry: your.registry.example.com
     repository: oscm-initdb
-    tag: v17.2.1_oscmaas
+    tag: v17.3.0_oscmaas
     pullPolicy: IfNotPresent
 
 service:
