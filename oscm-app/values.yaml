@@ -6,15 +6,16 @@ image:
   app:
     registry: your.registry.example.com
     repository: oscm-app
-    tag: v17.3.0_oscmaas
+    tag: v17.3.0
     pullPolicy: IfNotPresent
   initDb:
     registry: your.registry.example.com
     repository: oscm-initdb
-    tag: v17.3.0_oscmaas
+    tag: v17.3.0
     pullPolicy: IfNotPresent
 
 service:
+  # For running locally you may use type: NodePort
   type: LoadBalancer
   http:
     name: oscm-app-http
