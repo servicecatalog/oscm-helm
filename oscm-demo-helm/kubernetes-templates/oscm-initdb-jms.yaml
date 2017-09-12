@@ -1,0 +1,22 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: oscm-initdb-jms
+spec:
+  template:
+    metadata:
+      name: oscm-initdb-jms
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: oscm-initdb-jms
+        image: servicecatalog/oscm-initdb
+        imagePullPolicy: Always
+        env:
+        - name: TARGET
+          value: "JMS"
+        - name: SOURCE
+          value: "INIT"
+        - name: DB_HOST_JMS
+          value: "oscm-db"

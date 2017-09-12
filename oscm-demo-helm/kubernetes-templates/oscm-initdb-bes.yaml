@@ -1,0 +1,44 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: oscm-initdb-bes
+spec:
+  template:
+    metadata:
+      name: oscm-initdb-bes
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: oscm-initdb-bes
+        image: servicecatalog/oscm-initdb
+        imagePullPolicy: Always
+        env:
+        - name: TARGET
+          value: "BES"
+        - name: SOURCE
+          value: "INIT"
+        - name: DB_HOST_BES
+          value: "oscm-db"
+        - name: KAFKA_BOOTSTRAP_SERVERS
+          value: "kafka:9092"
+        - name: BASE_URL
+          value: "http://<IP>:8080/oscm-portal"
+        - name: BASE_URL_HTTPS
+          value: "https://<IP>:8081/oscm-portal"
+        - name: REPORT_ENGINEURL
+          value: "https://<IP>:<PORT>/birt/frameset?__report=${reportname}.rptdesign&SessionId=${sessionid}&__locale=${locale}&WSDLURL=${wsdlurl}&SOAPEndPoint=${soapendpoint}&wsname=ReportSecure&wsport=ReportSecurePort"
+        - name: REPORT_WSDLURL
+          value: "https://<IP>:<PORT>/ReportSecure/ReportingServiceSecureBean?wsdl"
+        - name: REPORT_SOAP_ENDPOINT
+          value: "https://<IP>:<PORT>/ReportSecure/ReportingServiceSecureBean"
+        - name: SSO_STS_URL
+          value: "https://<IP>:<PORT>/adfs/services/trust/13/usernamemixed"
+        - name: SSO_STS_METADATA_URL
+          value: "https://<IP>:<PORT>/adfs/services/trust/mex"
+        - name: SSO_DEFAULT_TENANT_ID
+          value: "oscmaas1"
+        - name: SSO_IDP_SAML_ASSERTION_ISSUER_ID
+          value: "http://<IP>:<PORT>/adfs/services/trust"
+        - name: SSO_LOGOUT_URL
+          value: "https://<IP>:<PORT>/adfs/ls/"

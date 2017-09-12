@@ -1,0 +1,48 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: rudder
+  labels:
+    name: rudder
+spec:
+  sessionAffinity: ClientIP
+  selector:
+    name: rudder
+  type: LoadBalancer
+  ports:
+  - name: http-rudder
+    protocol: TCP
+    port: 5000
+    targetPort: 5000
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: rudder
+  labels:
+    name: rudder
+spec:
+  containers:
+  - name: rudder
+    image: servicecatalog/rudder
+    env:
+    - name: RUDDER_TILLER_ADDRESS
+      value: "<IP>:<PORT>"
+    - name: RUDDER_HELM_REPO_FILE
+      value: "/opt/repos/rudder-repositories.yaml"
+    - name: RUDDER_BASIC_AUTH_USERNAME
+      value: "admin"
+    - name: RUDDER_BASIC_AUTH_PASSWORD
+      value: "admin123"
+    ports:
+    - containerPort: 5000
+    volumeMounts:
+    - name: secret-rudder-repositories
+      mountPath: "/opt/repos"
+      readOnly: false
+  volumes:
+  - name: secret-rudder-repositories
+    secret:
+      secretName: rudder-repositories
+

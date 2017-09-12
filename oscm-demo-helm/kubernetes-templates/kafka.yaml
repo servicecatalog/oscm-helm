@@ -1,0 +1,37 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: kafka
+  labels:
+    name: kafka
+spec:
+  selector:
+    name: kafka
+  ports:
+  - port: 9092
+    protocol: TCP
+    name: tcp-kafka
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kafka
+  labels:
+    name: kafka
+spec:
+  containers:
+  - name: kafka
+    image: servicecatalog/kafka
+    env:
+    - name: ZOOKEEPER_CONNECTION_STRING
+      value: "zookeeper:2181"
+    - name: KAFKA_ADVERTISED_HOST_NAME
+      value: "kafka"
+    - name: KAFKA_CREATE_TOPICS
+      value: "core-subscription:1:1,provisioning-release:1:1"
+    - name: KAFKA_TOPIC_CONFIG
+      value: cleanup.policy=compact
+    ports:
+    - containerPort: 9092
+

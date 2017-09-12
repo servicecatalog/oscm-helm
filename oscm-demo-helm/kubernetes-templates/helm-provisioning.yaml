@@ -1,0 +1,14 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: helm-provisioning
+  labels:
+    name: helm-provisioning
+spec:
+  containers:
+  - name: provisioning-service
+    image: servicecatalog/provisioning-service
+    env:
+    - name: KAFKA_SERVERS
+      value: "kafka:9092"

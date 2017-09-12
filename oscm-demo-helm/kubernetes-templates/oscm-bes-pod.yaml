@@ -1,0 +1,48 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: oscm-bes
+  labels:
+    name: oscm-bes
+spec:
+  containers:
+  - name: oscm-bes
+    image: servicecatalog/oscm-bes
+    imagePullPolicy: Always
+    env:
+    - name: DB_HOST_BES
+      value: "oscm-db"
+    - name: DB_HOST_JMS
+      value: "oscm-db"
+    - name: DB_TIMEOUT_BES
+      value: "5"
+    - name: DB_WAIT_BES
+      value: "5000"
+    - name: DB_RETRY_INTERVAL_BES
+      value: "3"
+    - name: DB_TIMEOUT_MI
+      value: "5"
+    - name: DB_WAIT_MI
+      value: "5000"
+    - name: DB_RETRY_INTERVAL_MI
+      value: "3"
+    - name: SMTP_HOST
+      value: "smtp.gmail.com"
+    - name: SMTP_PORT
+      value: "587"
+    - name: SMTP_FROM
+      value: "oscm.demo@gmail.com"
+    - name: SMTP_USER
+      value: "oscm.demo"
+    - name: SMTP_PWD
+      value: "<smtp_password>"
+    - name: SMTP_AUTH
+      value: "true"
+    - name: SMTP_TLS_ENABLE
+      value: "true"      
+    ports:
+    - containerPort: 8080
+      name: http-port
+    - containerPort: 8081
+      name: https-port

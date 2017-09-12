@@ -1,0 +1,139 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Copyright FUJITSU LIMITED 2017-->
+ 
+
+<tns:TechnicalServices
+  xmlns:tns="oscm.serviceprovisioning/1.9/TechnicalService.xsd"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="oscm.serviceprovisioning/1.9/TechnicalService.xsd ../../oscm-serviceprovisioning/javares/TechnicalServices.xsd">
+
+  
+  <tns:TechnicalService id="WordPress" build="10.07.2017"
+    provisioningType="ASYNCHRONOUS"
+    provisioningUrl=""
+    provisioningVersion="1.0"
+    accessType="DIRECT" 
+    baseUrl="" 
+    loginPath="">
+    <AccessInfo locale="en">
+       Open the given link...
+    </AccessInfo>
+    <LocalizedDescription locale="en">WordPress is one of the most versatile open source content management systems on the market. A publishing platform for building blogs and websites.</LocalizedDescription>
+    <LocalizedLicense locale="en">
+&lt;b&gt;License Agreement&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;
+The license terms of (hereinafter called "licensor") are applied
+for the concession of the rights of use for the entire or partly
+use of the object code of the software SmartSVN (hereinafter called "SOFTWARE")
+to contractors, juristic persons under public law or official fund assets in terms
+of §310 in conjunction with §14 BGB [Civil Code] (hereinafter called "licensee").
+Herewith the inclusion of the licensee's own terms and conditions is contradicted,
+unless their validity has explicitly been agreed to.&lt;br/&gt;&lt;br/&gt;
+
+2 Scope of the Rights of Use&lt;br/&gt;&lt;br/&gt;
+
+2.1 The following terms are valid for the assignment and use of the SOFTWARE
+for an unlimited period of time including any documentation and the license
+file (a file that is custom-made for each individual granting of a license,
+the file being necessary for the operation of the SOFTWARE).&lt;br/&gt;&lt;br/&gt;
+
+2.2 They are not valid for additional services such as installation,
+integration, parameterization and customization of the SOFTWARE
+to the licensee's requirements.
+    </LocalizedLicense>
+    <LocalizedTag locale="en" >web</LocalizedTag>
+    <LocalizedTag locale="en" >opensource</LocalizedTag>
+    <LocalizedTag locale="en" >cms</LocalizedTag>
+    <LocalizedTag locale="en" >blog</LocalizedTag>
+    <LocalizedTag locale="en" >php</LocalizedTag>
+    <ParameterDefinition id="template.repository" valueType="STRING" mandatory="true" configurable="true" default="stable">
+      <LocalizedDescription locale="en">Hem Repository</LocalizedDescription>
+    </ParameterDefinition>    
+    <ParameterDefinition id="template.name" valueType="STRING" mandatory="true" configurable="true" default="wordpress">
+      <LocalizedDescription locale="en">Hem Chart Name</LocalizedDescription>
+    </ParameterDefinition>    
+    <ParameterDefinition id="template.version" valueType="STRING" mandatory="true" configurable="true" default="latest">
+      <LocalizedDescription locale="en">Hem Chart Version</LocalizedDescription>
+    </ParameterDefinition>    
+    <ParameterDefinition id="target" valueType="STRING" mandatory="true" configurable="true" default="">
+      <LocalizedDescription locale="en">Rudder Proxy URL</LocalizedDescription>
+    </ParameterDefinition>    
+    <ParameterDefinition id="namespace" valueType="STRING" mandatory="true" configurable="true" default="default">
+      <LocalizedDescription locale="en">Namespace</LocalizedDescription>
+    </ParameterDefinition>    
+    <ParameterDefinition id="labels.release" valueType="STRING" mandatory="true" configurable="true" default="wordpress">
+      <LocalizedDescription locale="en">Release Identifier</LocalizedDescription>
+    </ParameterDefinition>
+
+    <ParameterDefinition id="parameters.image" valueType="ENUMERATION" default="bitnami/wordpress:4.8-r0">
+      <Options>           
+        <Option id="bitnami/wordpress:4.8-r0">
+          <LocalizedOption locale="en">4.8</LocalizedOption>
+        </Option>            
+        <Option id="bitnami/wordpress:4.7.5-r5">
+          <LocalizedOption locale="en">4.7.5</LocalizedOption>
+        </Option>
+      </Options>
+      <LocalizedDescription locale="en">WordPress Software Version</LocalizedDescription>
+    </ParameterDefinition>
+
+    <ParameterDefinition id="parameters.wordpressUsername" valueType="STRING" mandatory="true" configurable="true" default="admin" modificationType="ONE_TIME">
+      <LocalizedDescription locale="en">Administrator credentials - user name</LocalizedDescription>
+    </ParameterDefinition>
+    <ParameterDefinition id="parameters.wordpressFirstName" valueType="STRING" mandatory="false" configurable="true" default="admin" modificationType="ONE_TIME">
+      <LocalizedDescription locale="en">Administrator first name</LocalizedDescription>
+    </ParameterDefinition>
+    <ParameterDefinition id="parameters.wordpressLastName" valueType="STRING" mandatory="false" configurable="true" default="admin" modificationType="ONE_TIME">
+      <LocalizedDescription locale="en">Administrator last name</LocalizedDescription>
+    </ParameterDefinition>
+    <ParameterDefinition id="parameters.wordpressBlogName" valueType="STRING" mandatory="false" configurable="true" default="OSCM">
+      <LocalizedDescription locale="en">Blog name</LocalizedDescription>
+    </ParameterDefinition>
+    <ParameterDefinition id="parameters.mariadb.persistence.enabled" valueType="BOOLEAN" mandatory="false" configurable="true" default="true">
+      <LocalizedDescription locale="en">Persistence enabled</LocalizedDescription>
+    </ParameterDefinition>
+
+    <ParameterDefinition id="parameters.resources.requests.memory" valueType="ENUMERATION" default="512Mi">
+      <Options>           
+        <Option id="512Mi">
+          <LocalizedOption locale="en">Minimum 512MiB</LocalizedOption>
+        </Option>            
+        <Option id="1024Mi">
+          <LocalizedOption locale="en">Optimum 1024MiB</LocalizedOption>
+        </Option>
+        <Option id="2048Mi">
+          <LocalizedOption locale="en">Maximum 2048MiB</LocalizedOption>
+        </Option>
+      </Options>
+      <LocalizedDescription locale="en">Memory Requirement</LocalizedDescription>
+    </ParameterDefinition>
+    <ParameterDefinition id="parameters.resources.requests.cpu" valueType="ENUMERATION" default="300m">
+      <Options>
+        <Option id="300m">
+          <LocalizedOption locale="en">Minimum 300 miliCPU</LocalizedOption>
+        </Option>
+        <Option id="400m">
+          <LocalizedOption locale="en">Optimum 400 miliCPU</LocalizedOption>
+        </Option>
+        <Option id="500m">
+          <LocalizedOption locale="en">Maximum 500 miliCPU</LocalizedOption>
+        </Option>
+      </Options>
+    <LocalizedDescription locale="en">CPU Requirement (500 miliCPU is 1 core)</LocalizedDescription>
+    </ParameterDefinition>
+    <ParameterDefinition id="parameters.persistence.storage" valueType="ENUMERATION" default="10Gi">
+      <Options>
+        <Option id="10Gi">
+          <LocalizedOption locale="en">Minimum 10GiB</LocalizedOption>
+        </Option>
+        <Option id="15Gi">
+          <LocalizedOption locale="en">Optimum 15GiB</LocalizedOption>
+        </Option>
+        <Option id="20Gi">
+          <LocalizedOption locale="en">Maximum 20GiB</LocalizedOption>
+        </Option>
+      </Options>
+      <LocalizedDescription locale="en">Storage Requirement</LocalizedDescription>
+    </ParameterDefinition>
+  </tns:TechnicalService>
+  
+</tns:TechnicalServices>

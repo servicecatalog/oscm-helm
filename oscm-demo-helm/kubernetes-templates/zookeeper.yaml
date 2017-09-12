@@ -1,0 +1,38 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: zookeeper
+  labels:
+    name: zookeeper
+spec:
+  selector:
+    name: zookeeper
+  ports:
+  - port: 2181
+    protocol: TCP
+    name: tcp-client
+  - port: 2888
+    protocol: TCP
+    name: tcp-follower
+  - port: 3888
+    protocol: TCP
+    name: tcp-election
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: zookeeper
+  labels:
+    name: zookeeper
+spec:
+  containers:
+  - name: zookeeper
+    image: zookeeper:3.4.10
+    ports:
+    - containerPort: 2181
+      name: client
+    - containerPort: 2888
+      name: follower
+    - containerPort: 3888
+      name: election

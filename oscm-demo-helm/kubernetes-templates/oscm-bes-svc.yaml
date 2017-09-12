@@ -1,0 +1,19 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: oscm-bes
+  labels:
+    name: oscm-bes
+spec:
+  sessionAffinity: ClientIP
+  selector:
+    name: oscm-bes
+  type: LoadBalancer
+  ports:
+  - name: http-bes
+    protocol: TCP
+    port: 8080
+  - name: https-bes
+    protocol: TCP
+    port: 8081

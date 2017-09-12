@@ -1,0 +1,26 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: oscm-db
+  labels:
+    name: oscm-db
+spec:
+  selector:
+    name: oscm-db
+  ports:
+  - name: tcp-postgres
+    protocol: TCP
+    port: 5432
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: oscm-db
+  labels:
+    name: oscm-db
+spec:
+  containers:
+  - name: oscm-dbc
+    image: postgres:9.6-alpine
+    args: ["--max_prepared_transactions=50", "--max_connections=210"]
