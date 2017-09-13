@@ -39,7 +39,7 @@ Rudder Proxy interfaces the Helm Chart repositories and the Helm Tiller servrer.
 1. `kubectl create -f zookeeper.yaml`
 2. `kubectl create -f kafka.yaml`
 
-### Install OSCM applications
+### Install OSCM Applications
 
 
 1. `kubectl create -f helm-provisioning.yaml`
@@ -50,9 +50,23 @@ Rudder Proxy interfaces the Helm Chart repositories and the Helm Tiller servrer.
 6. `kubectl create -f oscm-initdb-bes.yaml`
 7. `kubectl create -f oscm-bes-pod.yaml`
 
-### Getting started
+### OSCM Service Definition for Helm Charts
 
-TODO
+In order to manage the Kubernetes applications with OSCM, they must be represented in OSCM with corresponding service definitions (OSCM technical service). The OSCM service definition describes:  
+- The target Kubernetes cluster (URL of the Rudder proxy) where the application will be deployed (parameter `target`);
+- The target Kubernetes namespace for deployment (parameter `namespace`)
+- The provisioning template (parameters with prefix `template.` for chart repository, name and version);
+- Kubernetes label as identifying attributes for the deployment (parameter `labels.release`)
+- Application parameters (parameters with prefix `parameters.` which correspond to the values in `values.yaml` from the chart).
+
+A sample service definition for the [`wordpress`](https://github.com/kubernetes/charts/tree/master/stable/wordpress) chart from [kubeapps repository](https://github.com/kubernetes/charts) can be found [here](https://github.com/servicecatalog/oscm-helm/blob/master/oscm-demo-helm/oscm-service/TechnicalServicesHelmWordPress.xml).
+
+
+### Getting Started
+
+To start working with OSCM, please see the [Getting Started](https://github.com/servicecatalog/development/wiki/Getting-Started) guide.
+
+
 
 
 
