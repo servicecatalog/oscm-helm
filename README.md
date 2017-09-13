@@ -9,6 +9,9 @@ The `oscm-demo-helm` directory contains:
 
 The same cluster is used for deploying the OSCM with all necessary applications and as a target cluster for applications managed by OSCM. The deployment can be adapted as needed (different clusters for OSCM and for managed apps, or different namespaces).
 
+**TODO**
+- [ ] Simplify the installation using Helm charts.
+
 ## Deployment in GCP
 
 - Kubernetes cluster with 2 nodes type "n1-standard-2" (2CPU, 7.5GB)
