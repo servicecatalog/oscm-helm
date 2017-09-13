@@ -69,6 +69,19 @@ A sample service definition for the [`wordpress`](https://github.com/kubernetes/
 
 To start working with OSCM, please see the [Getting Started](https://github.com/servicecatalog/development/wiki/Getting-Started) guide.
 
+If you use the sample [wordpress service](https://github.com/servicecatalog/oscm-helm/blob/master/oscm-demo-helm/oscm-service/TechnicalServicesHelmWordPress.xml), you can define meaningful configuration for it:
+
+- let the user configure wordpress version, admin credentials, blog name and cluster resources by subscribing
+- define prices for cluster resources (cpu, memory, storage)
+
+The wordpress application can be managed with modifying the corresponding OSCM subscription:
+- upgrade/downgrade using different wordpress version
+- scale up/down with using differen cluster resources
+- delete the application with teminating the OSCM subscription
+
+
+Enjoy!
+
 
 
 
