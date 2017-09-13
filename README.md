@@ -7,7 +7,10 @@ The `oscm-demo-helm` directory contains:
 - `kubernetes-templates` - Kubernetes templates for deployng OSCM applications, Kafka and Rudder REST Proxy for Helm.
 - `oscm-service` - Sample OSCM service definition for installing WordPress on Kubernetes with OSCM.
 
-The same cluster is used for deploying the OSCM with all necessary applications and as a target cluster for applications managed by OSCM. The deployment can be adapted as needed (different clusters for OSCM and for managed apps, or different namespaces).
+The same cluster is used for deploying the OSCM with all necessary applications and as a target cluster for applications managed by OSCM. The deployment can be adapted as needed (different clusters for OSCM and for managed apps, or different namespaces).  
+The image below shows deployment in different clusters.
+
+![OSCM Helm Provisioning](oscm-demo-helm/img/Demo.jpg)
 
 **TODO**
 - [ ] Simplify the installation using Helm charts.
