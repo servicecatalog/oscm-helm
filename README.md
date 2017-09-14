@@ -75,7 +75,7 @@ If you use the sample [wordpress service](https://github.com/servicecatalog/oscm
 - let the user configure wordpress version, admin credentials, blog name and cluster resources by subscribing
 - define prices for cluster resources (cpu, memory, storage)
 
-*Note: After the subscription is ready to use, it is planned to see the access information (URL or other) in OSCM. This is already planned as [issue](https://github.com/servicecatalog/provisioning-service/issues/8). Till the issue is solved the access information can be seen in `Kubernetes Dashboard` or extracted with `kubectl` command*
+*Note: After the subscription is ready to use, it is planned to see the access information (URL or other) in OSCM ([issue](https://github.com/servicecatalog/provisioning-service/issues/8)). Till the issue is solved, the access information can be seen in `Kubernetes Dashboard` or extracted with `kubectl` command*.
 
 The wordpress application can be managed with modifying the corresponding OSCM subscription:
 - upgrade/downgrade using different wordpress version
