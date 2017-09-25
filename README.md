@@ -19,17 +19,16 @@ The image below shows deployment in different clusters.
 ## Deployment in GCP
 
 Prerequisites:
-- gcloud SDK with kubectl (alternatively you can use the Kubernetes Dashboard)
-- Kubernetes cluster with 2 nodes type "n1-standard-2" (2CPU, 7.5GB)
+- gcloud SDK with kubectl (alternatively you can use the Kubernetes Dashboard) on your system
+- Kubernetes cluster with 2 nodes type "n1-standard-2" (2CPU, 7.5GB) in Google Container Engine
 - Gmail account for OSCM mail notification with less secure sign-in (or other mailserver solution)
 
 Assuming that kube configuration has the target cluster in the current context, execute the following installation steps in the given order:
 
 ### Install Helm
 
-Helm has two parts: a client (`helm`) and a server (`tiller`). Tiller runs inside of your Kubernetes cluster, and manages releases (installations) of your charts. Download the binaries for your system [here](https://github.com/kubernetes/helm/releases). 
-
-The command `helm init` will install the `tiller` server in your cluster.
+Helm has two parts: a client (`helm`) and a server (`tiller`). Tiller runs inside of your Kubernetes cluster, and manages releases (installations) of your charts. 
+Download the binaries for your system [here](https://github.com/kubernetes/helm/releases). The command `helm init` will install the `tiller` server in your cluster.
 
 ### Install Rudder
 
