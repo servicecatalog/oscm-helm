@@ -18,9 +18,10 @@ The image below shows deployment in different clusters.
 
 ## Deployment in GCP
 
+Prerequisites:
+- gcloud SDK with kubectl (alternatively you can use the Kubernetes Dashboard)
 - Kubernetes cluster with 2 nodes type "n1-standard-2" (2CPU, 7.5GB)
 - Gmail account for OSCM mail notification with less secure sign-in (or other mailserver solution)
-- gcloud SDK with kubectl (alternatively you can use the Kubernetes Dashboard)
 
 Assuming that kube configuration has the target cluster in the current context, execute the following installation steps in the given order:
 
