@@ -82,7 +82,7 @@ If you use the sample [wordpress service](https://github.com/servicecatalog/oscm
 
 The wordpress application can be managed with modifying the corresponding OSCM subscription:
 - upgrade/downgrade using different wordpress version
-- scale up/down with using differen cluster resources
+- scale up/down with using different cluster resources
 - delete the application with teminating the OSCM subscription
 
 
