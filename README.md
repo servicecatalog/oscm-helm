@@ -23,12 +23,13 @@ Prerequisites:
 - Kubernetes cluster with 2 nodes type "n1-standard-2" (2CPU, 7.5GB) in Google Container Engine
 - Gmail account for OSCM mail notification with less secure sign-in (or other mailserver solution)
 
+Set correct target cluster from client using commands shown in GCP. To get commands use "connect" button on your cluster in Container Engine/Container clusters.
 Assuming that kube configuration has the target cluster in the current context, execute the following installation steps in the given order:
 
 ### Install Helm
 
 Helm has two parts: a client (`helm`) and a server (`tiller`). Tiller runs inside of your Kubernetes cluster, and manages releases (installations) of your charts. 
-Download the binaries for your system [here](https://github.com/kubernetes/helm/releases). The command `helm init` will install the `tiller` server in your cluster.
+Download the binaries for your system [here](https://github.com/kubernetes/helm/releases). The command `helm init` will install the `tiller` server in your cluster. Once you have the client installed, upgrade Tiller with `helm init --upgrade`.
 
 ### Install Rudder
 
@@ -50,9 +51,9 @@ Rudder Proxy interfaces the Helm Chart repositories and the Helm Tiller servrer.
 2. `kubectl create -f oscm-db.yaml`
 3. `kubectl create -f oscm-initdb-jms.yaml`
 4. `kubectl create -f oscm-bes-svc.yaml`
-5. Extract the port of the bes service and adapt it in the `oscm-initdb-bes.yaml` file via `kubectl get svc`
-6. `kubectl create -f oscm-initdb-bes.yaml`
-7. `kubectl create -f oscm-bes-pod.yaml`
+5. Extract the external IP of the bes service and adapt BASE_URL and BASE_URL_HTTPS in the `oscm-initdb-bes.yaml` file. Fill out REPORT settings and all SSO settings using any valid URL, even though these are currently not used. Use `kubectl get svc --all-namespaces` to find IP.
+6. `kubectl create -f oscm-initdb-bes.yaml`, wait until this job is finished (check kubernetes dashboard)
+7. `kubectl create -f oscm-bes-pod.yaml`, wait until this job is finished (check kubernetes dashboard) before trying to log in to the OSCM portal.
 
 ### OSCM Service Definition for Helm Charts
 
@@ -69,6 +70,8 @@ A sample service definition for the [`wordpress`](https://github.com/kubernetes/
 ### Getting Started
 
 To start working with OSCM, please see the [Getting Started](https://github.com/servicecatalog/development/wiki/Getting-Started) guide.
+
+*Note: To log in to the OSCM portal use the external IP and Port. Use `kubectl get svc --all-namespaces`.
 
 If you use the sample [wordpress service](https://github.com/servicecatalog/oscm-helm/blob/master/oscm-demo-helm/oscm-service/TechnicalServicesHelmWordPress.xml), you can define meaningful configuration for it:
 
