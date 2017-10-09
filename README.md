@@ -3,7 +3,7 @@
 Helm charts for provisioning OSCM on Kubernetes.
 
 ## oscm-demo-helm
-This repository contains templates for the deployment of OSCM as a platform for managing Kubernetes applications using Helm. 
+This repository provides templates for the deployment of OSCM as a platform for managing Kubernetes applications using Helm. 
 The `oscm-demo-helm` directory contains:
 - `kubernetes-templates` - Kubernetes templates for deployng OSCM applications, Kafka and Rudder REST Proxy for Helm.
 - `oscm-service` - Sample OSCM techncial service definition for installing WordPress on Kubernetes with OSCM.
@@ -21,7 +21,7 @@ The image below shows the deployment in different clusters.
 
 Prerequisites:
 - gcloud SDK with kubectl on your system (alternatively, you can use the Kubernetes Dashboard). 
-- Kubernetes cluster with 2 nodes type "n1-standard-2" (2 CPU, 7.5 GB) in Google Container Engine
+- Kubernetes cluster with 2 nodes of type "n1-standard-2" (2 CPUs, 7.5 GB) in Google Container Engine
 - Gmail account for OSCM email notification allowing for access of less secure applications (or other mail server solution)
 
 Set the correct target cluster from the client using commands shown in GCP. To get the commands, use the "connect" button on your cluster in Container Engine/Container clusters.
@@ -55,13 +55,13 @@ Rudder Proxy interfaces the Helm Chart repositories and the Helm Tiller server. 
 2. `kubectl create -f oscm-db.yaml`
 3. `kubectl create -f oscm-initdb-jms.yaml`
 4. `kubectl create -f oscm-bes-svc.yaml`
-5. Extract the external IP address of the bes service and adapt the BASE_URL and BASE_URL_HTTPS in the `oscm-initdb-bes.yaml` file. Fill out REPORT settings and all SSO settings using any valid URL, even though these are currently not used. Use `kubectl get svc --all-namespaces` to find the IP address.
-6. `kubectl create -f oscm-initdb-bes.yaml`. Wait until this job is finished (check in the Kubernetes Dashboard)
+5. Extract the external IP address of the bes service and adapt the BASE_URL and BASE_URL_HTTPS settings in the `oscm-initdb-bes.yaml` file. Fill out the REPORT settings and all SSO settings using any valid URL, even though these settings are currently not used. Use `kubectl get svc --all-namespaces` to find the external IP address.
+6. `kubectl create -f oscm-initdb-bes.yaml`. Wait until this job is finished (check in the Kubernetes Dashboard).
 7. `kubectl create -f oscm-bes-pod.yaml`. Wait until this job is finished (check in the Kubernetes Dashboard) before trying to log in to the OSCM portal.
 
 ### OSCM Service Definition for Helm Charts
 
-In order to manage the Kubernetes applications with OSCM, they must be represented in OSCM by corresponding service definitions (technical services in OSCM). The OSCM service definition describes:  
+In order to manage Kubernetes applications with OSCM, they must be represented in OSCM by corresponding service definitions (technical services in OSCM). The OSCM service definition describes:  
 - The target Kubernetes cluster (URL of the Rudder Proxy) where the application will be deployed (`target` parameter);
 - The target Kubernetes namespace for deployment (`namespace` parameter)
 - The provisioning template (parameters with the `template.` prefix for the chart repository, name and version);
